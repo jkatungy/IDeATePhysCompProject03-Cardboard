@@ -189,8 +189,35 @@ function makeCubeGrid(width, height, color) {
 	}
 }
 
+// has the effect of moving the camera to destination
+// destination is a `new THREE.Vector3(x, y, z)`
+function goTo(destination, delayTime) {
+
+	var goalVector = destination.clone();
+	var currentPos = worldSphere.position;
+	var travelDir = goalVector.negate().sub(currentPos);
+
+	for (var i = 0; i < meshes.length; i++) {
+		meshes[i].originalPosition = new THREE.Vector3(meshes[i].position.x, meshes[i].position.y, meshes[i].position.z);
+	}
+
+	isCrouching = false;
+
+	var tween = new TWEEN.Tween({x: 0, y: 0, z: 0})
+		.to({x: travelDir.x, y: travelDir.y, z: travelDir.z}, delayTime * 0.5)
+		.easing(TWEEN.Easing.Quadratic.InOut)
+		.onUpdate(function() {
+
+			for (var i = 0; i < meshes.length; i++) {
+				meshes[i].position.set(meshes[i].originalPosition.x + this.x, meshes[i].originalPosition.y + this.y, meshes[i].originalPosition.z + this.z);
+			}
+
+		})
+		.start();
+}
+
 // Slides and object along a vector
-function slideObject(object, vector) {
+function slideObject(object, vector, delayTime) {
 
 	object.originalPosition = new THREE.Vector3(object.position.x, object.position.y, object.position.z);
 
@@ -206,7 +233,7 @@ function slideObject(object, vector) {
 }
 
 // Rotates an object along an axis
-function rotateObject(object, axis, radians) {
+function rotateObject(object, axis, radians, delayTime) {
 
 	object.originalRotation = new THREE.Vector3(object.rotation.x, object.rotation.y, object.rotation.z);
 
