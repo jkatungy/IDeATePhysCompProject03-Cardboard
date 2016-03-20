@@ -32,3 +32,9 @@ Using a Google Cardboard and a 3D world created in a web browser, you will desig
 
 ### Marking your progress
 You should make frequent commits to your forked repo, as it will be your final submission (in addition to a blog post). Standard operation procedure for using GitHub correctly should be followed (see [here](https://guides.github.com/activities/hello-world/) or [here](https://try.github.io/levels/1/challenges/1) if you're unsure).
+
+## Resources to extend this code
+* [Particle Cloud API](https://docs.particle.io/reference/api/)
+* [How to use APIs with JavaScript](https://www.codecademy.com/courses/javascript-beginner-en-EID4t/0/1?curriculum_id=5122e6f8b2cb8a8e97000a01)
+* [Particle API JS](https://docs.particle.io/reference/javascript/)
+* [Node.js Beginner's Guide](http://nodeguide.com/beginner.html)
