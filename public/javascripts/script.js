@@ -1,5 +1,4 @@
 
-
 // three.js objects
 var camera, scene, renderer;
 var effect, controls;
@@ -22,6 +21,8 @@ var stats;
 init();
 animate();
 
+
+// MAIN FUNCTIONS ==========
 
 function init() {
 
@@ -276,7 +277,6 @@ function picker() {
 		}
 	}
 }
-
 
 // MAKE IT RUN ==========
 
