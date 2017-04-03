@@ -1,6 +1,8 @@
 
 // three.js objects
 var camera, scene, renderer;
+var vertLocMovt;
+var horizLocMovt;
 var vertLoc = 8; //initialise y position of sphere and cube
 var horizLoc = 0; //initialize z position of sphere and cube
 var effect, controls;
@@ -308,35 +310,23 @@ function picker() {
 socket.on("accelerometer", function(data){
 	console.log(data);
 
-	if (data < 60){
-		console.log("drop");
-		horizLoc -= 1;
-	}
-	else {horizLoc == 0};
-	if (horizLoc > 16){
-		vertLoc += 1;
-		horizLoc == 16;
+	if (data > 60){
+		console.log("stay up");
+		horizLocMovt = false;
 	}
 });
 
 
 function animate() {
-	// camera.position.set(0, cz, 0); // positions the camera
-	// //increase z position of camera gradually
-	// cz-=0.1;
-	
-	//if pushed, i.e. if acceleration is greater than ---, move to edge of cube - move cube and worldSphere backwards
+	if (horizLocMovt = false){
+		horizLoc -= 1;
+	}
+	if (horizLoc > 15){
+		vertLoc += 1;
+		horizLoc == 16;
+	}
 	worldSphere.position.set(horizLoc, vertLoc, 0);
 	cube.position.set(horizLoc, vertLoc-225, 0);
-	//var zPos = Math.min(Math.max(horizLoc, 1), 20); //keep horizontal while on platform
-	// horizLoc -= 1;
-	// //if you move beyond the cube, i.e. z value is greater than half of cube length, fall into sea; i.e move cube and worldSphere upwards
-	// if (horizLoc > 16){
-	// 	//var yPos = Math.min(Math.max(vertLoc, 50), 225);
-	// 	horizLoc == 16;
-	// 	//vertLoc += 1;
-	// }
-
 
 
 	requestAnimationFrame(animate);
@@ -376,47 +366,3 @@ function render(dt) {
 	effect.render(scene, camera);
 }
 
-
-//===========================simple trial setting=================================================
-// var scene, camera, renderer;
-// var geometry, material, mesh;
-// var approach = 1000;
-
-// init();
-// animate();
-
-// function init() {
-
-// 	scene = new THREE.Scene();
-
-// 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-// 	//camera.position.z = approach;
-	
-// 	scene.add( camera );
-
-// 	geometry = new THREE.BoxGeometry( 200, 200, 200 );
-// 	material = new THREE.MeshLambertMaterial( { color: 0xff0000 } ); //, wireframe: true } );
-
-// 	mesh = new THREE.Mesh( geometry, material );
-// 	scene.add( mesh );
-
-// 	renderer = new THREE.WebGLRenderer();
-// 	renderer.setSize( window.innerWidth, window.innerHeight );
-
-// 	document.body.appendChild( renderer.domElement );
-
-// }
-
-// function animate() {
-
-// 	requestAnimationFrame( animate );
-
-// 	//mesh.rotation.x += 0.01;
-// 	//mesh.rotation.y += 0.02;
-
-// 	camera.position.z = approach;
-// 	approach += 10;
-
-// 	renderer.render( scene, camera );
-
-// }
