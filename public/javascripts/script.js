@@ -1,6 +1,8 @@
 
 // three.js objects
 var camera, scene, renderer;
+var vertLoc = 8; //initialise y position of sphere and cube
+var horizLoc = 0; //initialize z position of sphere and cube
 var effect, controls;
 var element, container;
 var clock = new THREE.Clock();
@@ -11,6 +13,7 @@ var cursor;
 
 // geometry
 var worldSphere;
+var cube;
 var meshes = [];
 var selectableObjects = [];
 
@@ -29,7 +32,7 @@ function init() {
 	// SCENE ==========
 	renderer = new THREE.WebGLRenderer(); // sets up the renderer for the browser
 	
-	renderer.setClearColor(0xfff00f); // sets the color of "clear", uncolored pixels
+	renderer.setClearColor(0x000000); // sets the color of "clear", uncolored pixels
 	renderer.setPixelRatio(window.devicePixelRatio) // sets the pixel ratio to the device's pixel ratio
 	
 	element = renderer.domElement; // grabs the DOM from the renderer
@@ -47,7 +50,8 @@ function init() {
 
 	// CAMERA ==========
 	camera = new THREE.PerspectiveCamera(135, 1, 0.001, 500); // creates a new global camera
-	camera.position.set(0, 8, 0); // positions the camera
+	
+	camera.position.set(0, 1, 0); // positions the camera
 	scene.add(camera); // adds the camera to the scene
 
 
@@ -59,6 +63,7 @@ function init() {
 		camera.position.y,
 		camera.position.z
 	);
+
 	controls.noZoom = true; // don't allow the camera to zoom
 	controls.noPan = true; // don't allow the camera to pan
 
@@ -101,11 +106,11 @@ function init() {
 	worldSphere = new THREE.Mesh( // create new background sphere
 		new THREE.SphereGeometry(450, 32, 32), // size it
 		new THREE.MeshBasicMaterial({ // skin it
-			map: THREE.ImageUtils.loadTexture('3D/textures/background.jpg'),
+			map: THREE.ImageUtils.loadTexture('3D/textures/seahoriz.jpg'),
 			side: THREE.DoubleSide
 		})
 	);
-	worldSphere.rotation.set(0, Math.PI / 2, 0) // position it
+	worldSphere.rotation.set(0, 0, 0) // position it
 	scene.add(worldSphere); // add it to the scene
 	meshes.push(worldSphere); // add it to the list of meshes
 
@@ -140,7 +145,7 @@ function loadAssets() {
 
 
 	// UNSELECTABLE OBJs ==========
-	var filenames = ["building"] // a list of all the filenames to load as unselectable OBJs
+	var filenames = ["stool"] // a list of all the filenames to load as unselectable OBJs
 	for (var i = 0; i < filenames.length; i++) {
 		objMtlLoader.load("3D/" + filenames[i] + ".obj", "3D/" + filenames[i] + ".mtl", function(object, url) { // load the OBJ and companion MTL
 			scene.add(object); // add it to the scene
@@ -148,11 +153,18 @@ function loadAssets() {
 
 			var filename = (url.split('.')[0]).split('/')[1]
 			object.name = filename // add a property to the new object that is its filename
+			
+			// if (filename = "stool"){
+			// 	object.position.y += 0;
+			// 	object.position.x += 2;
+			// 	//object.rotation.y += 0;
+			// }
+
 		});
 	}
 
 	// SELECTABLE OBJs ==========
-	var filenames = ["stool"] // a list of all the filenames to load as selectable OBJs
+	var filenames = [] // a list of all the filenames to load as selectable OBJs
 	for (var i = 0; i < filenames.length; i++) {
 		objMtlLoader.load("3D/" + filenames[i] + ".obj", "3D/" + filenames[i] + ".mtl", function(object, url) { // load the OBJ and companion MTL
 			scene.add(object); // add it to the scene
@@ -162,6 +174,12 @@ function loadAssets() {
 
 			var filename = (url.split('.')[0]).split('/')[1]
 			object.name = filename // add a property to the new object that is its filename
+
+			// if (filename = "battery"){
+			// 	object.position.y += 8;
+			// 	object.position.x += 10;
+			// 	object.rotation.y += 2;
+			// }
 		});
 	}
 
@@ -173,21 +191,25 @@ function loadAssets() {
 // Makes a grid of cubes on the ground plane for demo and scaling purposes
 function makeCubeGrid(width, height, color) {
 
-	for (var y = -width / 2; y < width / 2; y++) {
-		for (var x = -height / 2; x < height / 2; x++) {
-			if (x % 10 == 0 || y % 10 == 0) {
-				var cube = new THREE.Mesh(
-					new THREE.BoxGeometry(0.25, 0.25, 0.25),
-					new THREE.MeshBasicMaterial({
-						color: color
+	// for (var y = -width / 2; y < width / 2; y++) {
+	// 	for (var x = -height / 2; x < height / 2; x++) {
+	// 		if (x % 10 == 0 || y % 10 == 0) {
+				cube = new THREE.Mesh(
+					new THREE.CubeGeometry(30, 300, 30),//0.25, 0.25, 0.25),
+					new THREE.MeshBasicMaterial({ // skin it
+						map: THREE.ImageUtils.loadTexture('3D/textures/Sandstone.png'),
+						side: THREE.DoubleSide
+
+				// 	new THREE.MeshBasicMaterial({
+				// 		color: color
 					})
 				);
-				cube.position.set(x, 0, y);
+				// cube.position.set(0, -50, 0);
 				scene.add(cube);
 				meshes.push(cube);
-			}
-		}
-	}
+	// 		}
+	// 	}
+	// }
 }
 
 // has the effect of moving the camera to destination
@@ -263,10 +285,14 @@ function picker() {
 		if (intersected != intersects[0].object) {
 			if (intersected) {
 				intersected.material.emissive.setHex(intersected.currentHex);
+				console.log('Picked');
+				socket.emit('message', 'PICKED');
 			}
 
 			intersected = intersects[0].object;
 			intersected.currentHex = intersected.material.emissive.getHex();
+			console.log('Unpicked');
+			socket.emit('message', 'UNPICKED!');
 			intersected.material.emissive.setHex(0x405060);
 			
 		}
@@ -279,8 +305,40 @@ function picker() {
 }
 
 // MAKE IT RUN ==========
+socket.on("accelerometer", function(data){
+	console.log(data);
+
+	if (data < 60){
+		console.log("drop");
+		horizLoc -= 1;
+	}
+	else {horizLoc == 0};
+	if (horizLoc > 16){
+		vertLoc += 1;
+		horizLoc == 16;
+	}
+});
+
 
 function animate() {
+	// camera.position.set(0, cz, 0); // positions the camera
+	// //increase z position of camera gradually
+	// cz-=0.1;
+	
+	//if pushed, i.e. if acceleration is greater than ---, move to edge of cube - move cube and worldSphere backwards
+	worldSphere.position.set(horizLoc, vertLoc, 0);
+	cube.position.set(horizLoc, vertLoc-225, 0);
+	//var zPos = Math.min(Math.max(horizLoc, 1), 20); //keep horizontal while on platform
+	// horizLoc -= 1;
+	// //if you move beyond the cube, i.e. z value is greater than half of cube length, fall into sea; i.e move cube and worldSphere upwards
+	// if (horizLoc > 16){
+	// 	//var yPos = Math.min(Math.max(vertLoc, 50), 225);
+	// 	horizLoc == 16;
+	// 	//vertLoc += 1;
+	// }
+
+
+
 	requestAnimationFrame(animate);
 	TWEEN.update();
 
@@ -318,3 +376,47 @@ function render(dt) {
 	effect.render(scene, camera);
 }
 
+
+//===========================simple trial setting=================================================
+// var scene, camera, renderer;
+// var geometry, material, mesh;
+// var approach = 1000;
+
+// init();
+// animate();
+
+// function init() {
+
+// 	scene = new THREE.Scene();
+
+// 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+// 	//camera.position.z = approach;
+	
+// 	scene.add( camera );
+
+// 	geometry = new THREE.BoxGeometry( 200, 200, 200 );
+// 	material = new THREE.MeshLambertMaterial( { color: 0xff0000 } ); //, wireframe: true } );
+
+// 	mesh = new THREE.Mesh( geometry, material );
+// 	scene.add( mesh );
+
+// 	renderer = new THREE.WebGLRenderer();
+// 	renderer.setSize( window.innerWidth, window.innerHeight );
+
+// 	document.body.appendChild( renderer.domElement );
+
+// }
+
+// function animate() {
+
+// 	requestAnimationFrame( animate );
+
+// 	//mesh.rotation.x += 0.01;
+// 	//mesh.rotation.y += 0.02;
+
+// 	camera.position.z = approach;
+// 	approach += 10;
+
+// 	renderer.render( scene, camera );
+
+// }

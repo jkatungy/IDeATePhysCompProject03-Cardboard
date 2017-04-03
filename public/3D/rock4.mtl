@@ -1,0 +1,19 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 31.03.2017 11:37:16
+
+newmtl 02___Default
+	Ns 85.00
+	Ni 1.50
+	d 1.00
+	Tr 0.00
+	Tf 1.00 1.00 1.00 
+	illum 2
+	Ka 0.59 0.59 0.59
+	Kd 0.59 0.59 0.59
+	Ks 0.85 0.85 0.85
+	Ke 0.00 0.00 0.00
+	map_Ka C:\Users\jkatungy\Downloads\SeamlessRockTexture3.psd
+	map_Kd C:\Users\jkatungy\Downloads\SeamlessRockTexture3.psd
+	map_Ks C:\Users\jkatungy\Downloads\SeamlessRockTexture3.psd
+	map_bump C:\Users\jkatungy\Downloads\SeamlessRockTexture3.psd
+	bump C:\Users\jkatungy\Downloads\SeamlessRockTexture3.psd

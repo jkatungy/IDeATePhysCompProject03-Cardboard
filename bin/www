@@ -81,19 +81,63 @@ function onListening() {
     : 'port ' + addr.port;
 }
 
-/**
- * Socket.io
- */
+
+//johnny five stuff
+
+// var five = require("johnny-five");
+// var board = new five.Board();
+// var led;
+
+// board.on("ready", function() {
+//   led = new five.Led(13);
+//   //led.blink(500);
+// });
+
+var five = require("johnny-five");
+var board = new five.Board();
 
 var io = require('../app').io;
 
-io.on('connection', function(socket) {
+
+board.on("ready", function() {
+    var accelerometer = new five.Accelerometer({
+    controller: "ADXL335",
+    pins: ["A0", "A1", "A2"]
+  });
+
+  io.on('connection', function(socket) {
 
     console.log('User connected');
     socket.emit('message', 'Hello, user!');
 
 
+    accelerometer.on("change", function() {
+      socket.emit("accelerometer", this.roll);
+      console.log(this.roll);
+      if (this.roll < 60){
+        console.log('drop');
+      }
+    });
+
+    socket.on('message', function(data) { // log messages to the console
+      console.log(data);
+
+      // if (data == 'PICKED'){
+      //   led.on();
+      // }
+      // if (data == 'UNPICKED'){
+      //   led.off();
+      // }
+
+    });
+
+
     socket.on('disconnect', function() {
       console.log("User disconnected");
     });
+
+
+  });
 });
+
+
